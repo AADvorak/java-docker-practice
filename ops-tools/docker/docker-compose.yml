@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+
+  app:
+    build:
+      dockerfile: ./images/app/Dockerfile
+    ports:
+      - '8888:8080'
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ../../:/app
+    stdin_open: true
+    tty: true
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - cache:/data
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: school
+      POSTGRES_USER: postgres
+      POSTGRES_DB: school
+      PGDATA: /data/postgres
+    volumes:
+      - ../../data/postgres:/data/postgres
+      - ../../data/dump:/db-dump
+
+volumes:
+  cache:
+    driver: local
+
+networks:
+  docker-practice-net:
+    external: true
