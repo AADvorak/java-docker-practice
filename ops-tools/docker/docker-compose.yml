@@ -14,18 +14,22 @@ services:
       - ../../:/app
     stdin_open: true
     tty: true
+    networks:
+      docker-practice-net:
 
   redis:
-    image: redis
+    image: redis:7.0.3-alpine
     restart: always
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
     volumes:
       - cache:/data
+    networks:
+      docker-practice-net:
 
   postgres:
-    image: postgres
+    image: postgres:14.4-alpine
     restart: always
     ports:
       - '5432:5432'
@@ -37,6 +41,8 @@ services:
     volumes:
       - ../../data/postgres:/data/postgres
       - ../../data/dump:/db-dump
+    networks:
+      docker-practice-net:
 
 volumes:
   cache:
@@ -44,4 +50,3 @@ volumes:
 
 networks:
   docker-practice-net:
-    external: true
